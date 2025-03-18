@@ -1,12 +1,26 @@
 import { NavLink, Container } from '@mantine/core'
+type menuType = {
+  label: string
+  href: string
+}
+
+const menus: menuType[] = [
+  {
+    label: 'Home',
+    href: '/',
+  },
+  {
+    label: 'About',
+    href: '/about',
+  },
+]
+
 export const Sidebar = () => {
-  const menus = ["dashboard","masters","settings","reports"]
-  console.log(menus)
   return (
-    <Container height="100px">
-      <NavLink href="/about" label="About"/>
-      <NavLink href="/dashboard" label="Dashboard" />
-      <NavLink href="/logout" label="logout"/>
+    <Container>
+      {menus.map((menu) => (
+        <NavLink href={`${menu.href}`} label={menu.label} key={menu.label} />
+      ))}
     </Container>
   )
 }
