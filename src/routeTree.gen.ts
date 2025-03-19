@@ -14,12 +14,13 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as DashboardRouteImport } from './routes/dashboard/route'
+import { Route as BlogRouteImport } from './routes/blog/route'
 import { Route as AboutRouteImport } from './routes/about/route'
+import { Route as BlogPostIdRouteImport } from './routes/blog_/$postId/route'
 
 // Create Virtual Routes
 
 const IndexLazyImport = createFileRoute('/')()
-const IdIndexLazyImport = createFileRoute('/$id/')()
 
 // Create/Update Routes
 
@@ -30,6 +31,12 @@ const DashboardRouteRoute = DashboardRouteImport.update({
 } as any).lazy(() =>
   import('./routes/dashboard/route.lazy').then((d) => d.Route),
 )
+
+const BlogRouteRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/blog/route.lazy').then((d) => d.Route))
 
 const AboutRouteRoute = AboutRouteImport.update({
   id: '/about',
@@ -43,11 +50,13 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
-const IdIndexLazyRoute = IdIndexLazyImport.update({
-  id: '/$id/',
-  path: '/$id/',
+const BlogPostIdRouteRoute = BlogPostIdRouteImport.update({
+  id: '/blog_/$postId',
+  path: '/blog/$postId',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/$id/index.lazy').then((d) => d.Route))
+} as any).lazy(() =>
+  import('./routes/blog_/$postId/route.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -67,6 +76,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRoute
     }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -74,11 +90,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRoute
     }
-    '/$id/': {
-      id: '/$id/'
-      path: '/$id'
-      fullPath: '/$id'
-      preLoaderRoute: typeof IdIndexLazyImport
+    '/blog_/$postId': {
+      id: '/blog_/$postId'
+      path: '/blog/$postId'
+      fullPath: '/blog/$postId'
+      preLoaderRoute: typeof BlogPostIdRouteImport
       parentRoute: typeof rootRoute
     }
   }
@@ -89,46 +105,51 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutRouteRoute
+  '/blog': typeof BlogRouteRoute
   '/dashboard': typeof DashboardRouteRoute
-  '/$id': typeof IdIndexLazyRoute
+  '/blog/$postId': typeof BlogPostIdRouteRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutRouteRoute
+  '/blog': typeof BlogRouteRoute
   '/dashboard': typeof DashboardRouteRoute
-  '/$id': typeof IdIndexLazyRoute
+  '/blog/$postId': typeof BlogPostIdRouteRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/about': typeof AboutRouteRoute
+  '/blog': typeof BlogRouteRoute
   '/dashboard': typeof DashboardRouteRoute
-  '/$id/': typeof IdIndexLazyRoute
+  '/blog_/$postId': typeof BlogPostIdRouteRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/dashboard' | '/$id'
+  fullPaths: '/' | '/about' | '/blog' | '/dashboard' | '/blog/$postId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/dashboard' | '/$id'
-  id: '__root__' | '/' | '/about' | '/dashboard' | '/$id/'
+  to: '/' | '/about' | '/blog' | '/dashboard' | '/blog/$postId'
+  id: '__root__' | '/' | '/about' | '/blog' | '/dashboard' | '/blog_/$postId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   AboutRouteRoute: typeof AboutRouteRoute
+  BlogRouteRoute: typeof BlogRouteRoute
   DashboardRouteRoute: typeof DashboardRouteRoute
-  IdIndexLazyRoute: typeof IdIndexLazyRoute
+  BlogPostIdRouteRoute: typeof BlogPostIdRouteRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   AboutRouteRoute: AboutRouteRoute,
+  BlogRouteRoute: BlogRouteRoute,
   DashboardRouteRoute: DashboardRouteRoute,
-  IdIndexLazyRoute: IdIndexLazyRoute,
+  BlogPostIdRouteRoute: BlogPostIdRouteRoute,
 }
 
 export const routeTree = rootRoute
@@ -143,8 +164,9 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
+        "/blog",
         "/dashboard",
-        "/$id/"
+        "/blog_/$postId"
       ]
     },
     "/": {
@@ -153,11 +175,14 @@ export const routeTree = rootRoute
     "/about": {
       "filePath": "about/route.tsx"
     },
+    "/blog": {
+      "filePath": "blog/route.tsx"
+    },
     "/dashboard": {
       "filePath": "dashboard/route.tsx"
     },
-    "/$id/": {
-      "filePath": "$id/index.lazy.tsx"
+    "/blog_/$postId": {
+      "filePath": "blog_/$postId/route.tsx"
     }
   }
 }

@@ -16,10 +16,6 @@ const menus: menuType[] = [
     href: '/about',
   },
   {
-    label: 'Contact',
-    href: '/rasulasdkfa',
-  },
-  {
     label: 'Blog',
     href: '/blog',
   },
