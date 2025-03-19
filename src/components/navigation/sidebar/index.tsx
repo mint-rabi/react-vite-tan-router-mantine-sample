@@ -13,6 +13,14 @@ const menus: menuType[] = [
     label: 'About',
     href: '/about',
   },
+  {
+    label: 'Contact',
+    href: '/rasulasdkfa',
+  },
+  {
+    label: 'Blog',
+    href: '/blog',
+  }
 ]
 
 export const Sidebar = () => {
