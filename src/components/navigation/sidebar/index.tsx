@@ -1,4 +1,4 @@
-import { NavLink, Container } from '@mantine/core'
+import { NavLink } from '@mantine/core'
 type menuType = {
   label: string
   href: string
@@ -25,10 +25,10 @@ const menus: menuType[] = [
 
 export const Sidebar = () => {
   return (
-    <Container>
+    <>
       {menus.map((menu) => (
         <NavLink href={`${menu.href}`} label={menu.label} key={menu.label} />
       ))}
-    </Container>
+    </>
   )
 }
