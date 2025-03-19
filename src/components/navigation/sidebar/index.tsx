@@ -1,6 +1,7 @@
-import { NavLink, NavLinkProps } from '@mantine/core'
+import { AppShell, Button, NavLink, NavLinkProps } from '@mantine/core'
 import React from 'react'
 import { createLink } from '@tanstack/react-router'
+
 type menuType = {
   label: string
   href: string
@@ -21,13 +22,28 @@ const menus: menuType[] = [
   },
 ]
 
-export const Sidebar = () => {
+export const Sidebar: React.FC<{
+  opened: boolean
+  toggle: () => void
+}> = (props) => {
   return (
-    <>
+    <AppShell.Navbar>
+      {props.opened ? (
+        <Button onClick={props.toggle}>{'<'}</Button>
+      ) : (
+        <Button
+          onClick={props.toggle}
+          style={{
+            padding: 0,
+          }}
+        >
+          {'>'}
+        </Button>
+      )}
       {menus.map((menu) => {
-        return <MenuItem key={menu.href} label={menu.label} href={menu.href} />
+        return <MenuItem key={menu.href} label={props.opened ? menu.label : menu.label.charAt(0)} href={menu.href} />
       })}
-    </>
+    </AppShell.Navbar>
   )
 }
 

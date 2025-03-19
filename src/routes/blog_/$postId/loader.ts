@@ -40,6 +40,6 @@ export async function fetch(id: string): Promise<{
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(post)
-    }, 10000)
+    }, 1000)
   })
 }
