@@ -20,7 +20,7 @@ const menus: menuType[] = [
   {
     label: 'Blog',
     href: '/blog',
-  }
+  },
 ]
 
 export const Sidebar = () => {
