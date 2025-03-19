@@ -1,4 +1,6 @@
-import { NavLink } from '@mantine/core'
+import { NavLink, NavLinkProps } from '@mantine/core'
+import React from 'react'
+import { createLink } from '@tanstack/react-router'
 type menuType = {
   label: string
   href: string
@@ -26,9 +28,24 @@ const menus: menuType[] = [
 export const Sidebar = () => {
   return (
     <>
-      {menus.map((menu) => (
-        <NavLink href={`${menu.href}`} label={menu.label} key={menu.label} />
-      ))}
+      {menus.map((menu) => {
+        return <MenuItem key={menu.href} label={menu.label} href={menu.href} />
+      })}
     </>
   )
+}
+
+type MantineNavLinkProps = Omit<NavLinkProps, 'href'>
+
+const MantineNavLinkComponent = React.forwardRef<HTMLAnchorElement, MantineNavLinkProps>((props, ref) => {
+  return <NavLink ref={ref} {...props} />
+})
+
+const CustomNavLinkComponent = createLink(MantineNavLinkComponent)
+
+const MenuItem: React.FC<{
+  label: string
+  href: string
+}> = (props) => {
+  return <CustomNavLinkComponent to={props.href} label={props.label} />
 }

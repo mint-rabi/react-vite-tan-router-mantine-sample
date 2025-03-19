@@ -13,20 +13,29 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as DashboardRouteImport } from './routes/dashboard/route'
+import { Route as AboutRouteImport } from './routes/about/route'
 
 // Create Virtual Routes
 
-const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 const IdIndexLazyImport = createFileRoute('/$id/')()
 
 // Create/Update Routes
 
-const AboutLazyRoute = AboutLazyImport.update({
+const DashboardRouteRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/dashboard/route.lazy').then((d) => d.Route),
+)
+
+const AboutRouteRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
+} as any).lazy(() => import('./routes/about/route.lazy').then((d) => d.Route))
 
 const IndexLazyRoute = IndexLazyImport.update({
   id: '/',
@@ -55,7 +64,14 @@ declare module '@tanstack/react-router' {
       id: '/about'
       path: '/about'
       fullPath: '/about'
-      preLoaderRoute: typeof AboutLazyImport
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRoute
     }
     '/$id/': {
@@ -72,45 +88,52 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
-  '/about': typeof AboutLazyRoute
+  '/about': typeof AboutRouteRoute
+  '/dashboard': typeof DashboardRouteRoute
   '/$id': typeof IdIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
-  '/about': typeof AboutLazyRoute
+  '/about': typeof AboutRouteRoute
+  '/dashboard': typeof DashboardRouteRoute
   '/$id': typeof IdIndexLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
-  '/about': typeof AboutLazyRoute
+  '/about': typeof AboutRouteRoute
+  '/dashboard': typeof DashboardRouteRoute
   '/$id/': typeof IdIndexLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/$id'
+  fullPaths: '/' | '/about' | '/dashboard' | '/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/$id'
-  id: '__root__' | '/' | '/about' | '/$id/'
+  to: '/' | '/about' | '/dashboard' | '/$id'
+  id: '__root__' | '/' | '/about' | '/dashboard' | '/$id/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
-  AboutLazyRoute: typeof AboutLazyRoute
+  AboutRouteRoute: typeof AboutRouteRoute
+  DashboardRouteRoute: typeof DashboardRouteRoute
   IdIndexLazyRoute: typeof IdIndexLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
-  AboutLazyRoute: AboutLazyRoute,
+  AboutRouteRoute: AboutRouteRoute,
+  DashboardRouteRoute: DashboardRouteRoute,
   IdIndexLazyRoute: IdIndexLazyRoute,
 }
 
-export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>()
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {
@@ -120,6 +143,7 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
       "children": [
         "/",
         "/about",
+        "/dashboard",
         "/$id/"
       ]
     },
@@ -127,7 +151,10 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
       "filePath": "index.lazy.tsx"
     },
     "/about": {
-      "filePath": "about.lazy.tsx"
+      "filePath": "about/route.tsx"
+    },
+    "/dashboard": {
+      "filePath": "dashboard/route.tsx"
     },
     "/$id/": {
       "filePath": "$id/index.lazy.tsx"
