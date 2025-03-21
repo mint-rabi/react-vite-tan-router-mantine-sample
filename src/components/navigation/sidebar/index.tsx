@@ -1,6 +1,8 @@
 import { AppShell, Button, NavLink, NavLinkProps } from '@mantine/core'
 import React from 'react'
 import { createLink } from '@tanstack/react-router'
+import { useSignOut } from 'react-firebase-hooks/auth'
+import { auth } from '../../../services/firebase/auth.ts'
 
 type menuType = {
   label: string
@@ -26,6 +28,7 @@ export const Sidebar: React.FC<{
   opened: boolean
   toggle: () => void
 }> = (props) => {
+  const [logout] = useSignOut(auth)
   return (
     <AppShell.Navbar>
       {props.opened ? (
@@ -43,6 +46,12 @@ export const Sidebar: React.FC<{
       {menus.map((menu) => {
         return <MenuItem key={menu.href} label={props.opened ? menu.label : menu.label.charAt(0)} href={menu.href} />
       })}
+      <NavLink
+        onClick={() => {
+          logout()
+        }}
+        label={'Logout'}
+      ></NavLink>
     </AppShell.Navbar>
   )
 }

@@ -5,12 +5,6 @@ import { AppShell } from '@mantine/core'
 import { Sidebar } from '../components/navigation/sidebar'
 
 export const Route = createRootRoute({
-  // component: () => (
-  //   <>
-  //     <Outlet />
-  //     <TanStackRouterDevtools />
-  //   </>
-  // ),
   component: () => <RootApp />,
 })
 

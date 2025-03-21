@@ -8,21 +8,23 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login/route'
 import { Route as DashboardRouteImport } from './routes/dashboard/route'
 import { Route as BlogRouteImport } from './routes/blog/route'
 import { Route as AboutRouteImport } from './routes/about/route'
+import { Route as IndexImport } from './routes/index'
 import { Route as BlogPostIdRouteImport } from './routes/blog_/$postId/route'
 
-// Create Virtual Routes
-
-const IndexLazyImport = createFileRoute('/')()
-
 // Create/Update Routes
+
+const LoginRouteRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/login/route.lazy').then((d) => d.Route))
 
 const DashboardRouteRoute = DashboardRouteImport.update({
   id: '/dashboard',
@@ -44,7 +46,7 @@ const AboutRouteRoute = AboutRouteImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about/route.lazy').then((d) => d.Route))
 
-const IndexLazyRoute = IndexLazyImport.update({
+const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
@@ -66,7 +68,7 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexLazyImport
+      preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
     '/about': {
@@ -90,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRoute
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/blog_/$postId': {
       id: '/blog_/$postId'
       path: '/blog/$postId'
@@ -103,52 +112,70 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/about': typeof AboutRouteRoute
   '/blog': typeof BlogRouteRoute
   '/dashboard': typeof DashboardRouteRoute
+  '/login': typeof LoginRouteRoute
   '/blog/$postId': typeof BlogPostIdRouteRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/about': typeof AboutRouteRoute
   '/blog': typeof BlogRouteRoute
   '/dashboard': typeof DashboardRouteRoute
+  '/login': typeof LoginRouteRoute
   '/blog/$postId': typeof BlogPostIdRouteRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/about': typeof AboutRouteRoute
   '/blog': typeof BlogRouteRoute
   '/dashboard': typeof DashboardRouteRoute
+  '/login': typeof LoginRouteRoute
   '/blog_/$postId': typeof BlogPostIdRouteRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/blog' | '/dashboard' | '/blog/$postId'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/blog'
+    | '/dashboard'
+    | '/login'
+    | '/blog/$postId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/blog' | '/dashboard' | '/blog/$postId'
-  id: '__root__' | '/' | '/about' | '/blog' | '/dashboard' | '/blog_/$postId'
+  to: '/' | '/about' | '/blog' | '/dashboard' | '/login' | '/blog/$postId'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/blog'
+    | '/dashboard'
+    | '/login'
+    | '/blog_/$postId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
+  IndexRoute: typeof IndexRoute
   AboutRouteRoute: typeof AboutRouteRoute
   BlogRouteRoute: typeof BlogRouteRoute
   DashboardRouteRoute: typeof DashboardRouteRoute
+  LoginRouteRoute: typeof LoginRouteRoute
   BlogPostIdRouteRoute: typeof BlogPostIdRouteRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
+  IndexRoute: IndexRoute,
   AboutRouteRoute: AboutRouteRoute,
   BlogRouteRoute: BlogRouteRoute,
   DashboardRouteRoute: DashboardRouteRoute,
+  LoginRouteRoute: LoginRouteRoute,
   BlogPostIdRouteRoute: BlogPostIdRouteRoute,
 }
 
@@ -166,11 +193,12 @@ export const routeTree = rootRoute
         "/about",
         "/blog",
         "/dashboard",
+        "/login",
         "/blog_/$postId"
       ]
     },
     "/": {
-      "filePath": "index.lazy.tsx"
+      "filePath": "index.tsx"
     },
     "/about": {
       "filePath": "about/route.tsx"
@@ -180,6 +208,9 @@ export const routeTree = rootRoute
     },
     "/dashboard": {
       "filePath": "dashboard/route.tsx"
+    },
+    "/login": {
+      "filePath": "login/route.tsx"
     },
     "/blog_/$postId": {
       "filePath": "blog_/$postId/route.tsx"
