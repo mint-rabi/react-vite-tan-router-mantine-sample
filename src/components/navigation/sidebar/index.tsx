@@ -31,27 +31,31 @@ export const Sidebar: React.FC<{
   const [logout] = useSignOut(auth)
   return (
     <AppShell.Navbar>
-      {props.opened ? (
-        <Button onClick={props.toggle}>{'<'}</Button>
-      ) : (
-        <Button
-          onClick={props.toggle}
-          style={{
-            padding: 0,
+      <AppShell.Section grow>
+        {props.opened ? (
+          <Button onClick={props.toggle}>{'<'}</Button>
+        ) : (
+          <Button
+            onClick={props.toggle}
+            style={{
+              padding: 0,
+            }}
+          >
+            {'>'}
+          </Button>
+        )}
+        {menus.map((menu) => {
+          return <MenuItem key={menu.href} label={props.opened ? menu.label : menu.label.charAt(0)} href={menu.href} />
+        })}
+      </AppShell.Section>
+      <AppShell.Section>
+        <NavLink
+          onClick={() => {
+            logout()
           }}
-        >
-          {'>'}
-        </Button>
-      )}
-      {menus.map((menu) => {
-        return <MenuItem key={menu.href} label={props.opened ? menu.label : menu.label.charAt(0)} href={menu.href} />
-      })}
-      <NavLink
-        onClick={() => {
-          logout()
-        }}
-        label={'Logout'}
-      ></NavLink>
+          label={'Logout'}
+        ></NavLink>
+      </AppShell.Section>
     </AppShell.Navbar>
   )
 }
