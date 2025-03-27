@@ -1,4 +1,4 @@
-import { useAuthState, useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth'
+import { useAuthState, useSignInWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth'
 import { auth } from '../../services/firebase/auth.ts'
 import { useCallback } from 'react'
 import { Container, Flex, PasswordInput, Stack, TextInput } from '@mantine/core'
@@ -17,6 +17,7 @@ export const LoggedInProvider: React.FC<loggedInProviderProps> = (props) => {
 
 const LoginForm: React.FC = () => {
   const [signIn] = useSignInWithEmailAndPassword(auth)
+  const [signInWithGoogle] = useSignInWithGoogle(auth)
   const form = useForm({
     initialValues: {
       email: '',
@@ -36,6 +37,9 @@ const LoginForm: React.FC = () => {
     const { email, password } = form.getValues()
     signIn(email, password)
   }, [signIn, form])
+  const procSignInWithGoogle = useCallback(async () => {
+    await signInWithGoogle()
+  }, [signInWithGoogle])
   return (
     <Stack align="center" justify={'stretch'}>
       <form onSubmit={form.onSubmit(procSignIn)}>
@@ -75,6 +79,7 @@ const LoginForm: React.FC = () => {
               Login
             </button>
           </Flex>
+          <button onClick={procSignInWithGoogle}>Google</button>
         </Container>
       </form>
     </Stack>
